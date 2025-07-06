@@ -4,22 +4,30 @@ import Home from './pages/Home';
 import Team from './pages/Team';
 import AddPlayer from './pages/AddPlayer';
 import UpdateScore from './pages/UpdateScore';
+import './App.css'; // styling here
 
 const App = () => {
   return (
     <BrowserRouter>
-      <nav style={{ display: "flex", gap: "1rem", padding: "1rem" }}>
-        <Link to="/">Live Score</Link>
-        <Link to="/team">Team</Link>
-        <Link to="/add-player">Add Player</Link>
-        <Link to="/update-score">Admin</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/add-player" element={<AddPlayer />} />
-        <Route path="/update-score" element={<UpdateScore />} />
-      </Routes>
+      <div className="main-wrapper">
+        <nav className="navbar">
+          <Link to="/">🏏 Live Score</Link>
+          <Link to="/team">👥 Team</Link>
+          <Link to="/add-player">➕ Add Player</Link>
+          <Link to="/update-score">🛠️ Admin</Link>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/add-player" element={<AddPlayer />} />
+          <Route path="/update-score" element={<UpdateScore />} />
+        </Routes>
+
+        <footer className="footer">
+          Made with ❤️ by <strong>Vinay</strong>
+        </footer>
+      </div>
     </BrowserRouter>
   );
 };
