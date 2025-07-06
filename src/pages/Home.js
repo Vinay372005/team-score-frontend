@@ -11,12 +11,24 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Live Match Score</h2>
+    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
+      <h2 style={{ fontWeight: "bold", fontSize: "24px", marginBottom: "1rem" }}>
+        🏏 Live Match Score
+      </h2>
+
       {score ? (
-        <p>{score.runs}/{score.wickets} in {score.overs} overs ({score.status})</p>
+        <div style={{
+          backgroundColor: "#ffffff",
+          padding: "1rem",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          fontSize: "18px"
+        }}>
+          <p><strong>{score.runs}/{score.wickets}</strong> in <strong>{score.overs}</strong> overs</p>
+          <p>Status: <strong>{score.status}</strong></p>
+        </div>
       ) : (
-        <p>Loading...</p>
+        <p>Loading score...</p>
       )}
     </div>
   );
