@@ -1,37 +1,39 @@
+// src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import AddPlayer from './AddPlayer';
-import UpdateScore from './UpdateScore';
-import LiveScore from './LiveScore';
-import Team from './Team';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import AddPlayer from './pages/AddPlayer';
+import LiveScore from './pages/LiveScore';
+import Team from './pages/Team';
+import UpdateScore from './pages/UpdateScore';
+import './App.css';
 
 const App = () => {
   return (
     <Router>
-      <nav style={{ backgroundColor: "#003366", padding: "1rem" }}>
-        <Link to="/" style={linkStyle}>🏏 Live Score</Link>
-        <Link to="/add-player" style={linkStyle}>➕ Add Player</Link>
-        <Link to="/update-score" style={linkStyle}>✏️ Update Score</Link>
-        <Link to="/team" style={linkStyle}>👥 Team</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<LiveScore />} />
-        <Route path="/add-player" element={<AddPlayer />} />
-        <Route path="/update-score" element={<UpdateScore />} />
-        <Route path="/team" element={<Team />} />
-      </Routes>
-      <footer style={{ textAlign: "center", marginTop: "2rem", padding: "1rem", backgroundColor: "#f0f0f0" }}>
-        Made with ❤️ by Vinay
-      </footer>
+      <div className="app">
+        <nav className="navbar">
+          <h2>🏏 My Cricket Team</h2>
+          <ul className="nav-links">
+            <li><Link to="/">Live Score</Link></li>
+            <li><Link to="/add">Add Player</Link></li>
+            <li><Link to="/team">Team</Link></li>
+            <li><Link to="/update">Update Score</Link></li>
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<LiveScore />} />
+          <Route path="/add" element={<AddPlayer />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/update" element={<UpdateScore />} />
+        </Routes>
+
+        <footer className="footer">
+          <p>Made by Vinay © 2025</p>
+        </footer>
+      </div>
     </Router>
   );
-};
-
-const linkStyle = {
-  color: "white",
-  marginRight: "1.5rem",
-  textDecoration: "none",
-  fontWeight: "bold"
 };
 
 export default App;
