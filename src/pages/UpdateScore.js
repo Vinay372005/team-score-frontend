@@ -1,6 +1,7 @@
 // src/pages/UpdateScore.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../FormStyle.css';
 
 const UpdateScore = () => {
   const [form, setForm] = useState({ runs: '', wickets: '', overs: '', status: '' });
