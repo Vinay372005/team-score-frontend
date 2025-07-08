@@ -1,4 +1,4 @@
-// === AddPlayer.js ===
+// src/pages/AddPlayer.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -18,7 +18,6 @@ const AddPlayer = () => {
       alert("✅ Player added and SMS sent!");
       setForm({ name: '', role: '', phone: '', photo: null });
     } catch (err) {
-      console.error("❌ Failed to add player", err);
       alert("❌ Failed to add player");
     }
   };
@@ -32,36 +31,10 @@ const AddPlayer = () => {
         borderRadius: "10px",
         boxShadow: "0 0 10px rgba(0,0,0,0.1)"
       }}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          required
-          style={inputStyle}
-        />
-        <input
-          type="text"
-          placeholder="Role"
-          value={form.role}
-          onChange={e => setForm({ ...form, role: e.target.value })}
-          required
-          style={inputStyle}
-        />
-        <input
-          type="tel"
-          placeholder="Phone Number"
-          value={form.phone}
-          onChange={e => setForm({ ...form, phone: e.target.value })}
-          required
-          style={inputStyle}
-        />
-        <input
-          type="file"
-          onChange={e => setForm({ ...form, photo: e.target.files[0] })}
-          required
-          style={{ marginBottom: "1rem" }}
-        />
+        <input type="text" placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required style={inputStyle} />
+        <input type="text" placeholder="Role" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} required style={inputStyle} />
+        <input type="tel" placeholder="Phone Number" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required style={inputStyle} />
+        <input type="file" onChange={e => setForm({ ...form, photo: e.target.files[0] })} required style={{ marginBottom: "1rem" }} />
         <button type="submit" style={buttonStyle}>Add Player</button>
       </form>
     </div>
