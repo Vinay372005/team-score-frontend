@@ -1,41 +1,63 @@
-// src/pages/LiveScore.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { isAdmin } from '../utils/admin';
 
 const LiveScore = () => {
-  const [score, setScore] = useState(null);
+  const [scores, setScores] = useState([]);
+  const [adminPin, setAdminPin] = useState('');
 
   useEffect(() => {
-    const fetchScore = async () => {
+    const fetchScores = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/scores`);
-        setScore(res.data);
+        setScores(res.data);
       } catch (err) {
-        alert("❌ Failed to load live score");
+        alert("❌ Failed to load score");
       }
     };
-
-    fetchScore();
-    const interval = setInterval(fetchScore, 10000); // Refresh every 10 seconds
-    return () => clearInterval(interval);
+    fetchScores();
   }, []);
 
-  if (!score) return <p style={{ padding: "2rem" }}>Loading live score...</p>;
+  const handleDelete = async (id) => {
+    if (!isAdmin(adminPin)) {
+      alert("❌ Unauthorized! Incorrect admin PIN.");
+      return;
+    }
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/scores/${id}`);
+      alert("✅ Score deleted!");
+      setScores(scores.filter(score => score._id !== id));
+    } catch (err) {
+      alert("❌ Failed to delete score");
+    }
+  };
 
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h2 style={{ fontWeight: "bold", fontSize: "24px", marginBottom: "1rem" }}>🏏 Live Match Score</h2>
-      <div style={{
-        backgroundColor: "#fff",
-        padding: "1.5rem",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        display: "inline-block"
-      }}>
-        <h3 style={{ fontSize: "28px", color: "#003366" }}>{score.runs}/{score.wickets}</h3>
-        <p style={{ fontSize: "20px" }}>{score.overs} overs</p>
-        <p>Status: <strong>{score.status}</strong></p>
-      </div>
+    <div className="score-container">
+      <h2>📺 Live Score</h2>
+      <input
+        type="password"
+        placeholder="Enter Admin PIN to delete score"
+        value={adminPin}
+        onChange={(e) => setAdminPin(e.target.value)}
+        style={{ marginBottom: '1rem', padding: '0.5rem', borderRadius: '6px' }}
+      />
+      {scores.length === 0 ? (
+        <p>No score updates yet.</p>
+      ) : (
+        scores.map((score, idx) => (
+          <div key={idx} className="score-card">
+            <h3>{score.teamA} 🆚 {score.teamB}</h3>
+            <p>🏏 Batting: {score.battingTeam}</p>
+            <p>Score: {score.runs}/{score.wickets} in {score.overs} overs</p>
+            <p>Status: {score.status}</p>
+            {isAdmin(adminPin) && (
+              <button onClick={() => handleDelete(score._id)} className="delete-btn">Delete Score</button>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 };
