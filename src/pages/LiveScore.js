@@ -44,21 +44,22 @@ const LiveScore = () => {
         onChange={(e) => setAdminPin(e.target.value)}
         style={{ marginBottom: '1rem', padding: '0.5rem', borderRadius: '6px' }}
       />
-      {scores.length === 0 ? (
-        <p>No score updates yet.</p>
-      ) : (
-        scores.map((score, idx) => (
-          <div key={idx} className="score-card">
-            <h3>{score.teamA} 🆚 {score.teamB}</h3>
-            <p>🏏 Batting: {score.battingTeam}</p>
-            <p>Score: {score.runs}/{score.wickets} in {score.overs} overs</p>
-            <p>Status: {score.status}</p>
-            {isAdmin(adminPin) && (
-              <button onClick={() => handleDelete(score._id)} className="delete-btn">Delete Score</button>
-            )}
-          </div>
-        ))
+    {Array.isArray(scores) && scores.length > 0 ? (
+  scores.map((score, idx) => (
+    <div key={idx} className="score-card">
+      <h3>{score.teamA} 🆚 {score.teamB}</h3>
+      <p>🏏 Batting: {score.battingTeam}</p>
+      <p>Score: {score.runs}/{score.wickets} in {score.overs} overs</p>
+      <p>Status: {score.status}</p>
+      {isAdmin(adminPin) && (
+        <button onClick={() => handleDelete(score._id)} className="delete-btn">Delete Score</button>
       )}
+    </div>
+  ))
+) : (
+  <p>No score updates yet.</p>
+)}
+
     </div>
   );
 };
