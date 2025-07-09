@@ -1,57 +1,53 @@
-// src/pages/UpdateScore.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../FormStyle.css';
+import { isAdmin } from '../utils/admin';
 
 const UpdateScore = () => {
-  const [form, setForm] = useState({ runs: '', wickets: '', overs: '', status: '' });
+  const [runs, setRuns] = useState('');
+  const [wickets, setWickets] = useState('');
+  const [overs, setOvers] = useState('');
+  const [adminPin, setAdminPin] = useState('');
+
+  useEffect(() => {
+    const fetchScore = async () => {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/scores`);
+      if (res.data.length > 0) {
+        const latest = res.data[res.data.length - 1];
+        setRuns(latest.runs);
+        setWickets(latest.wickets);
+        setOvers(latest.overs);
+      }
+    };
+    fetchScore();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isAdmin(adminPin)) {
+      alert("❌ Unauthorized! Incorrect admin PIN.");
+      return;
+    }
+
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/scores`, form);
-      alert("✅ Score updated successfully!");
-      setForm({ runs: '', wickets: '', overs: '', status: '' });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/scores`, { runs, wickets, overs });
+      alert("✅ Score updated!");
     } catch (err) {
       alert("❌ Failed to update score");
     }
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "500px", margin: "auto" }}>
-      <h2 style={{ fontWeight: "bold", fontSize: "24px", marginBottom: "1rem" }}>✍️ Update Match Score</h2>
-      <form onSubmit={handleSubmit} style={{
-        backgroundColor: "#fff",
-        padding: "1.5rem",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-      }}>
-        <input type="number" placeholder="Runs" value={form.runs} onChange={e => setForm({ ...form, runs: e.target.value })} required style={inputStyle} />
-        <input type="number" placeholder="Wickets" value={form.wickets} onChange={e => setForm({ ...form, wickets: e.target.value })} required style={inputStyle} />
-        <input type="text" placeholder="Overs (e.g. 12.3)" value={form.overs} onChange={e => setForm({ ...form, overs: e.target.value })} required style={inputStyle} />
-        <input type="text" placeholder="Status (e.g. Inning 1 Started)" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} required style={inputStyle} />
-        <button type="submit" style={buttonStyle}>Update Score</button>
+    <div className="form-container">
+      <h2>Update Live Score</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="number" placeholder="Runs" value={runs} onChange={(e) => setRuns(e.target.value)} required />
+        <input type="number" placeholder="Wickets" value={wickets} onChange={(e) => setWickets(e.target.value)} required />
+        <input type="text" placeholder="Overs" value={overs} onChange={(e) => setOvers(e.target.value)} required />
+        <input type="password" placeholder="Admin PIN" value={adminPin} onChange={(e) => setAdminPin(e.target.value)} required />
+        <button type="submit">Update Score</button>
       </form>
     </div>
   );
-};
-
-const inputStyle = {
-  display: "block",
-  width: "100%",
-  padding: "0.75rem",
-  marginBottom: "1rem",
-  border: "1px solid #ccc",
-  borderRadius: "6px"
-};
-
-const buttonStyle = {
-  backgroundColor: "#003366",
-  color: "white",
-  padding: "0.75rem 1.5rem",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
 };
 
 export default UpdateScore;
