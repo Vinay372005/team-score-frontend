@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../Form.css'; // Correct path
+import '../styles/Form.css';
+ // Correct path
 
 const UpdateScore = () => {
   const [formData, setFormData] = useState({
