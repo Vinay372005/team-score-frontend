@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { isAdmin } from '../utils/admin';
+import '../styles/Form.css';
 
 const UpdateScore = () => {
   const [form, setForm] = useState({
