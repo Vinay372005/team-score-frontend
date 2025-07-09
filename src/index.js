@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './styles/Form.css'; // Optional: for styling forms
+import './Form.css';
+ // Optional: for styling forms
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
