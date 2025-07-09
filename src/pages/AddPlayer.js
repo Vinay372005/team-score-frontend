@@ -1,40 +1,58 @@
-// src/pages/AddPlayer.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../styles/Form.css';
+import '../Form.css'; // Correct path
 
 const AddPlayer = () => {
-  const [form, setForm] = useState({ name: '', role: '', phone: '', photo: null });
+  const [formData, setFormData] = useState({
+    name: '',
+    role: '',
+    photo: null,
+    phoneNumber: '',
+  });
+
+  const [status, setStatus] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === 'photo' ? files[0] : value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append('name', form.name);
-    data.append('role', form.role);
-    data.append('phone', form.phone);
-    data.append('photo', form.photo);
+    setStatus('Uploading...');
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/players`, data);
-      alert('✅ Player added and SMS sent!');
-      setForm({ name: '', role: '', phone: '', photo: null });
+      const data = new FormData();
+      for (const key in formData) {
+        data.append(key, formData[key]);
+      }
+
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/players`, data);
+      setStatus('✅ Player added successfully!');
+      setFormData({ name: '', role: '', photo: null, phoneNumber: '' });
     } catch (err) {
-      alert('❌ Failed to add player');
+      console.error(err);
+      setStatus('❌ Error adding player');
     }
   };
 
   return (
     <div className="form-container">
-      <h2>➕ Add New Player</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-        <input type="text" placeholder="Role" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} required />
-        <input type="tel" placeholder="Phone Number" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
-        <input type="file" onChange={e => setForm({ ...form, photo: e.target.files[0] })} required />
-        <button type="submit">Add Player</button>
+      <h2>Add Player</h2>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <input type="text" name="name" placeholder="Name" required onChange={handleChange} />
+        <input type="text" name="role" placeholder="Role (Batsman/Bowler/Allrounder)" required onChange={handleChange} />
+        <input type="text" name="phoneNumber" placeholder="Phone Number" required onChange={handleChange} />
+        <input type="file" name="photo" accept="image/*" required onChange={handleChange} />
+        <button type="submit">Add</button>
       </form>
+      <p>{status}</p>
     </div>
   );
 };
 
 export default AddPlayer;
+
