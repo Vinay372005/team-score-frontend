@@ -1,130 +1,63 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../styles/Form.css';
+import { isAdmin } from '../utils/admin';
 
 const UpdateScore = () => {
-  const [formData, setFormData] = useState({
-    batsman: '',
-    bowler: '',
+  const [score, setScore] = useState({
+    teamA: '',
+    teamB: '',
+    battingTeam: '',
     runs: '',
-    ballType: '',
-    over: ''
+    wickets: '',
+    overs: '',
+    status: '',
+    adminPin: ''
   });
 
-  const [message, setMessage] = useState('');
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setScore({ ...score, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isAdmin(score.adminPin)) {
+      alert("❌ Unauthorized! Incorrect admin PIN.");
+      return;
+    }
+
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/score/update`, formData);
-      setMessage('✅ Score updated successfully!');
-      setFormData({ batsman: '', bowler: '', runs: '', ballType: '', over: '' });
-    } catch (error) {
-      console.error('❌ Error updating score:', error);
-      setMessage('❌ Failed to update score. Please try again.');
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/scores`, score);
+      alert("✅ Score updated!");
+      setScore({
+        teamA: '',
+        teamB: '',
+        battingTeam: '',
+        runs: '',
+        wickets: '',
+        overs: '',
+        status: '',
+        adminPin: ''
+      });
+    } catch (err) {
+      alert("❌ Failed to update score");
     }
   };
 
-  const containerStyle = {
-    maxWidth: '400px',
-    margin: '2rem auto',
-    padding: '2rem',
-    backgroundColor: '#f7f7f7',
-    borderRadius: '12px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)'
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    margin: '0.5rem 0 1rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px'
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#2196F3',
-    color: '#fff',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer'
-  };
-
-  const labelStyle = {
-    fontWeight: 'bold'
-  };
-
-  const messageStyle = {
-    marginTop: '1rem',
-    color: message.includes('success') ? 'green' : 'red',
-    textAlign: 'center'
-  };
-
   return (
-    <div style={containerStyle}>
-      <h2 style={{ textAlign: 'center' }}>Update Score</h2>
-      <form onSubmit={handleSubmit}>
-        <label style={labelStyle}>Batsman Name</label>
-        <input
-          type="text"
-          name="batsman"
-          value={formData.batsman}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
-
-        <label style={labelStyle}>Bowler Name</label>
-        <input
-          type="text"
-          name="bowler"
-          value={formData.bowler}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
-
-        <label style={labelStyle}>Runs</label>
-        <input
-          type="number"
-          name="runs"
-          value={formData.runs}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
-
-        <label style={labelStyle}>Ball Type (Normal, Wide, No Ball)</label>
-        <input
-          type="text"
-          name="ballType"
-          value={formData.ballType}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
-
-        <label style={labelStyle}>Over Number</label>
-        <input
-          type="text"
-          name="over"
-          value={formData.over}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
-
-        <button type="submit" style={buttonStyle}>Submit</button>
-      </form>
-      {message && <div style={messageStyle}>{message}</div>}
-    </div>
+    <form className="form" onSubmit={handleSubmit}>
+      <h2>Update Match Score</h2>
+      <input type="text" name="teamA" placeholder="Team A" value={score.teamA} onChange={handleChange} required />
+      <input type="text" name="teamB" placeholder="Team B" value={score.teamB} onChange={handleChange} required />
+      <input type="text" name="battingTeam" placeholder="Batting Team" value={score.battingTeam} onChange={handleChange} required />
+      <input type="number" name="runs" placeholder="Runs" value={score.runs} onChange={handleChange} required />
+      <input type="number" name="wickets" placeholder="Wickets" value={score.wickets} onChange={handleChange} required />
+      <input type="text" name="overs" placeholder="Overs" value={score.overs} onChange={handleChange} required />
+      <input type="text" name="status" placeholder="Match Status" value={score.status} onChange={handleChange} required />
+      <input type="password" name="adminPin" placeholder="Admin PIN" value={score.adminPin} onChange={handleChange} required />
+      <button type="submit">Update Score</button>
+    </form>
   );
 };
 
