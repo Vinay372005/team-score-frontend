@@ -1,4 +1,3 @@
-// src/pages/AddPlayer.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -11,7 +10,7 @@ const AddPlayer = () => {
     e.preventDefault();
 
     if (!name || !role || !photo) {
-      alert('❌ Please fill all fields');
+      alert("❌ Please fill in all fields");
       return;
     }
 
@@ -19,20 +18,20 @@ const AddPlayer = () => {
       await axios.post(`${process.env.REACT_APP_API_URL}/api/players`, {
         name,
         role,
-        photo,
+        photo
       });
-      alert('✅ Player added!');
+      alert("✅ Player added successfully!");
       setName('');
       setRole('');
       setPhoto('');
-    } catch (err) {
-      alert('❌ Error adding player');
+    } catch (error) {
+      alert("❌ Failed to add player");
     }
   };
 
   return (
-    <div className="add-player-container" style={{ padding: '1rem' }}>
-      <h2>Add Player 🏏</h2>
+    <div className="add-player-container">
+      <h2>➕ Add Player</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <input
           type="text"
@@ -42,7 +41,7 @@ const AddPlayer = () => {
         />
         <input
           type="text"
-          placeholder="Role (Batsman/Bowler/All-Rounder)"
+          placeholder="Role (Batsman/Bowler)"
           value={role}
           onChange={(e) => setRole(e.target.value)}
         />
@@ -59,4 +58,3 @@ const AddPlayer = () => {
 };
 
 export default AddPlayer;
-
