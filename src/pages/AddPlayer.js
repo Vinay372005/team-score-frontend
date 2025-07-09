@@ -1,7 +1,7 @@
 // src/pages/AddPlayer.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../FormStyle.css';
+import '../styles/Form.css';
 
 const AddPlayer = () => {
   const [form, setForm] = useState({ name: '', role: '', phone: '', photo: null });
