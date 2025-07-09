@@ -1,62 +1,54 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { isAdmin } from '../utils/admin';
-import '../styles/Form.css';
+import '../Form.css'; // Correct path
 
 const UpdateScore = () => {
-  const [form, setForm] = useState({
-    teamA: '',
-    teamB: '',
-    battingTeam: '',
+  const [formData, setFormData] = useState({
+    batsman: '',
+    bowler: '',
     runs: '',
-    wickets: '',
-    overs: '',
-    status: '',
+    ballType: '',
   });
-  const [adminPin, setAdminPin] = useState('');
+
+  const [status, setStatus] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!isAdmin(adminPin)) {
-      alert("❌ Unauthorized! Incorrect admin PIN.");
-      return;
-    }
+    setStatus('Updating...');
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/scores`, form);
-      alert("✅ Score updated!");
-      setForm({
-        teamA: '',
-        teamB: '',
-        battingTeam: '',
-        runs: '',
-        wickets: '',
-        overs: '',
-        status: '',
-      });
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/scores/update`, formData);
+      setStatus('✅ Score updated');
+      setFormData({ batsman: '', bowler: '', runs: '', ballType: '' });
     } catch (err) {
-      alert("❌ Failed to update score");
+      console.error(err);
+      setStatus('❌ Failed to update score');
     }
   };
 
   return (
     <div className="form-container">
-      <h2>📝 Update Live Score</h2>
+      <h2>Update Score (Admin only)</h2>
       <form onSubmit={handleSubmit}>
-        <input type="password" placeholder="Enter Admin PIN" value={adminPin} onChange={e => setAdminPin(e.target.value)} required />
-        <input type="text" placeholder="Team A" value={form.teamA} onChange={e => setForm({ ...form, teamA: e.target.value })} required />
-        <input type="text" placeholder="Team B" value={form.teamB} onChange={e => setForm({ ...form, teamB: e.target.value })} required />
-        <input type="text" placeholder="Batting Team" value={form.battingTeam} onChange={e => setForm({ ...form, battingTeam: e.target.value })} required />
-        <input type="number" placeholder="Runs" value={form.runs} onChange={e => setForm({ ...form, runs: e.target.value })} required />
-        <input type="number" placeholder="Wickets" value={form.wickets} onChange={e => setForm({ ...form, wickets: e.target.value })} required />
-        <input type="text" placeholder="Overs" value={form.overs} onChange={e => setForm({ ...form, overs: e.target.value })} required />
-        <input type="text" placeholder="Match Status" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} required />
-        <button type="submit">Update Score</button>
+        <input type="text" name="batsman" placeholder="Batsman Name" required onChange={handleChange} value={formData.batsman} />
+        <input type="text" name="bowler" placeholder="Bowler Name" required onChange={handleChange} value={formData.bowler} />
+        <input type="number" name="runs" placeholder="Runs" required onChange={handleChange} value={formData.runs} />
+        <select name="ballType" required onChange={handleChange} value={formData.ballType}>
+          <option value="">Select Ball Type</option>
+          <option value="normal">Normal</option>
+          <option value="wide">Wide</option>
+          <option value="no-ball">No Ball</option>
+          <option value="bye">Bye</option>
+        </select>
+        <button type="submit">Update</button>
       </form>
+      <p>{status}</p>
     </div>
   );
 };
 
 export default UpdateScore;
-
