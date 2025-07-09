@@ -1,3 +1,4 @@
+// src/pages/LiveScore.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { isAdmin } from '../utils/admin';
