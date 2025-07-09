@@ -1,60 +1,55 @@
 // src/pages/AddPlayer.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../styles/Form.css';
+import { isAdmin } from '../utils/admin';
 
 const AddPlayer = () => {
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('');
-  const [photo, setPhoto] = useState('');
+  const [player, setPlayer] = useState({
+    name: '',
+    role: '',
+    team: '',
+    photo: '',
+    adminPin: ''
+  });
+
+  const handleChange = (e) => {
+    setPlayer({ ...player, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !role || !photo) {
-      alert("❌ Please fill in all fields");
+    if (!isAdmin(player.adminPin)) {
+      alert("❌ Unauthorized! Incorrect admin PIN.");
       return;
     }
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/players`, {
-        name,
-        role,
-        photo
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/players`, player);
+      alert('✅ Player added!');
+      setPlayer({
+        name: '',
+        role: '',
+        team: '',
+        photo: '',
+        adminPin: ''
       });
-      alert("✅ Player added successfully!");
-      setName('');
-      setRole('');
-      setPhoto('');
-    } catch (error) {
-      alert("❌ Failed to add player");
+    } catch (err) {
+      alert('❌ Failed to add player');
     }
   };
 
   return (
-    <div className="add-player-container">
-      <h2>➕ Add Player</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <input
-          type="text"
-          placeholder="Player Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Role (Batsman/Bowler)"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Photo URL"
-          value={photo}
-          onChange={(e) => setPhoto(e.target.value)}
-        />
-        <button type="submit">Add Player</button>
-      </form>
-    </div>
+    <form className="form" onSubmit={handleSubmit}>
+      <h2>Add Player</h2>
+      <input type="text" name="name" placeholder="Name" value={player.name} onChange={handleChange} required />
+      <input type="text" name="role" placeholder="Role (Batsman/Bowler)" value={player.role} onChange={handleChange} required />
+      <input type="text" name="team" placeholder="Team" value={player.team} onChange={handleChange} required />
+      <input type="text" name="photo" placeholder="Photo URL" value={player.photo} onChange={handleChange} required />
+      <input type="password" name="adminPin" placeholder="Admin PIN" value={player.adminPin} onChange={handleChange} required />
+      <button type="submit">Add Player</button>
+    </form>
   );
 };
 
